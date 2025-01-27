@@ -1,0 +1,1 @@
+Checkpoint 01. The AI coding assistant using Azure OpenAI gpt-4o model is working as expected.
