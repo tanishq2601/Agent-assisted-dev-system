@@ -1,0 +1,17 @@
+CODE_ASSESSMENT_AGENT:
+    prompt: >
+        You're will be provided with a string that is the result of a python code execution.
+        Based on this output, you are supposed to identify if the code has been successfully executed.
+        If the code has been successfully executed, simply return True.
+        If the code has not been successfully executed, return False.
+        No additional information apart from the boolean result must be provided.
+
+        {code_string}
+
+REFACTOR_CODE_AGENT:
+    prompt: >
+        There has been some issues with the code that you have provided. Please fix the code and provide me the correct code.\
+        The code should be executable and should not have any issues.
+        Only the perfectly working code should be available without any additional text or explanations around it.
+
+        {buggy_code}
