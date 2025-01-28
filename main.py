@@ -1,7 +1,6 @@
 import os
 from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
 from autogen_agentchat.messages import TextMessage
-from autogen_agentchat.ui import Console
 from autogen_core import CancellationToken
 from autogen_core.models import UserMessage
 from autogen_agentchat.agents import AssistantAgent
