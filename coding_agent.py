@@ -68,18 +68,18 @@ class CodeGenratingAgent:
         return cleaned_code
 
 
-# if __name__ == "__main__":
-#     import asyncio
+if __name__ == "__main__":
+    import asyncio
 
-#     code_generator = CodeGenratingAgent("Write a buggy python code to print fibonnaci series between 1 and 100 and it should not be executable. Only and only provide the code, no unnecessary\
-#                           text or explanations around it.")
+    code_generator = CodeGenratingAgent("Build a FastAPI code to print fibonnaci series between 1 and 100 in python. Only and only provide the code, no unnecessary\
+                          text or explanations around it.")
     
-#     assistant_response = asyncio.run(code_generator.assistant_run())
+    assistant_response = asyncio.run(code_generator.assistant_run())
 
-#     parsed_response = json.loads(assistant_response.chat_message.content)
-#     code_content = parsed_response["content"]
+    parsed_response = json.loads(assistant_response.chat_message.content)
+    code_content = parsed_response["content"]
 
-#     cleaned_code = code_content.replace("```", "").replace("python", "")
+    cleaned_code = code_content.replace("```", "").replace("python", "")
 
-#     with open("sample/code_buggy.py", "w") as code_file:
-#         code_file.write(cleaned_code)
+    with open("sample/code_buggy.py", "w") as code_file:
+        code_file.write(cleaned_code)

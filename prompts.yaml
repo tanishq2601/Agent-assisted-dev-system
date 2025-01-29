@@ -15,3 +15,27 @@ REFACTOR_CODE_AGENT:
         Only the perfectly working code should be available without any additional text or explanations around it.
 
         {buggy_code}
+
+DEPLOYMENT_AGENT : 
+    prompt: >
+        You will be provided with the path to a static code file. It can either be a python file or a bash script.
+        Your task is to successfully deploy the code to the Azure App Service. No additional text apart from the command to run the deployment code
+        must be provided in the response. 
+        The necessary parameters like the resource group name and the app service names are also provided to you. Always add a target path when deploying a static file.
+
+        Sample code : 
+            az webapp deploy --resource-group <group-name> --name <app-name> --src-path config.json --type=static --target-path staticfile/config.json
+        
+        resource_group : {resource_group}
+        app_name : {app_name}
+        code_file_path : {code_file_path}
+
+AZURE_AVAILABILITY_CHECK:
+    prompt: >
+        You will be provided with the output of a command that checks the availability of the Azure CLI.
+        Based on this output, you are supposed to identify if the Azure CLI is available.
+        If the Azure CLI is available, simply return True.
+        If the Azure CLI is not available, return False.
+        No additional text apart from the boolean result must be provided at all!
+
+        {result}
