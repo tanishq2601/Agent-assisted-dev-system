@@ -8,7 +8,7 @@ from autogen_core.models import UserMessage
 from autogen_core.code_executor import CodeBlock
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 
-from coding_agent import CodeGenratingAgent
+from coding_agent.coding_agent import CodeGenratingAgent
 
 import warnings
 warnings.filterwarnings("ignore")

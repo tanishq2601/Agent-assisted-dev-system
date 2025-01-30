@@ -71,8 +71,9 @@ class CodeGenratingAgent:
 if __name__ == "__main__":
     import asyncio
 
-    code_generator = CodeGenratingAgent("Build a FastAPI code to print fibonnaci series between 1 and 100 in python. Only and only provide the code, no unnecessary\
-                          text or explanations around it.")
+    code_generator = CodeGenratingAgent("Build a FastAPI code to print fibonnaci series between 1 and 100 in python.The code should be perfectly deployable along \
+                                        with everything added related to CORS middleware. Only and only provide the code, no unnecessary\
+                                        text or explanations around it.")
     
     assistant_response = asyncio.run(code_generator.assistant_run())
 

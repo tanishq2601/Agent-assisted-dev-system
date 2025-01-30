@@ -73,7 +73,9 @@ tinycss2==1.4.0
 tqdm==4.67.1
 urllib3==2.3.0
 uvicorn==0.34.0
+python-multipart=0.0.20
 webencodings==0.5.1
 websockets==14.2
 wrapt==1.17.2
 yarg==0.1.9
+gunicorn==23.0.0
