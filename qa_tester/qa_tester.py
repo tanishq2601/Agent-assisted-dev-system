@@ -1,6 +1,7 @@
 import os
 import yaml
 from distutils.util import strtobool
+import asyncio
 
 from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
 from autogen_core import CancellationToken
@@ -12,11 +13,6 @@ from coding_agent.coding_agent import CodeGenratingAgent
 
 import warnings
 warnings.filterwarnings("ignore")
-
-
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
 
 with open("prompts.yaml", "r") as file:
     prompts = yaml.safe_load(file)
@@ -58,29 +54,11 @@ class QATester:
     
     def code_fixer(self, buggy_code_file_path):
         code_generator = CodeGenratingAgent("Fix the bug in this code and provide me the correct code.")
-        refactored_code = asyncio.run(code_generator.refactor_code(buggy_code_file_path))
+        refactored_code, new_code_path = asyncio.run(code_generator.refactor_code(buggy_code_file_path))
 
-        fixed_code_block = qa_tester.read_code("code_refactor/code_refactored.py")
-        fixed_executed_code = asyncio.run(qa_tester.qa_tester("code_refactor/code_refactored.py"))
+        fixed_code_block = self.read_code(new_code_path)
+        fixed_executed_code = asyncio.run(self.qa_tester(new_code_path))
 
-        return fixed_executed_code.output
+        return fixed_executed_code.output, new_code_path
     
-    
-if __name__ == "__main__":
-    import asyncio
-    import json
-
-    qa_tester = QATester()
-    
-    executed_code = asyncio.run(qa_tester.qa_tester("sample/code_buggy.py"))
-    
-    output_verification = asyncio.run(qa_tester.code_assesment_agent(executed_code))
-    output_verification = bool(strtobool(output_verification.content))
-    
-    if not output_verification:
-        print("Uhoh! Code execution failed. Fixing the code...")
-        fixed_executed_code = qa_tester.code_fixer("sample/code_buggy.py")
-        print("Code is now fixed and running fine 🥳")    
-    else:
-        print("Code is working fine 🥳")
         

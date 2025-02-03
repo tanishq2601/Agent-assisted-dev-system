@@ -1,3 +1,11 @@
+DEVELOPER_AGENT:
+    prompt: >
+        You will be provided with a user query asking you to write a python code. 
+        Write scalable, clean and production-grade code along with necessary comments explaining the code.
+        Do not provide any additional text apart from the code. 
+        
+        {user_query}
+
 CODE_ASSESSMENT_AGENT:
     prompt: >
         You're will be provided with a string that is the result of a python code execution.

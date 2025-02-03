@@ -1,6 +1,7 @@
 import os
 import yaml
 import json
+import asyncio
 
 from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
 from autogen_agentchat.messages import TextMessage
@@ -11,18 +12,13 @@ from autogen_agentchat.agents import AssistantAgent
 import warnings
 warnings.filterwarnings("ignore")
 
-
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
-
-
 with open("prompts.yaml", "r") as f:
     prompts = yaml.safe_load(f)
 
 class CodeGenratingAgent:
     def __init__(self, user_query=None):
         self.user_query = user_query
+        self.developer_agent_prompt = prompts["DEVELOPER_AGENT"]["prompt"]
         self.refactor_code_agent_prompt = prompts["REFACTOR_CODE_AGENT"]["prompt"]
         self.model_client = AzureOpenAIChatCompletionClient(
             azure_deployment="gpt-4o",
@@ -40,7 +36,7 @@ class CodeGenratingAgent:
 
     async def code_generator(self):
         user_query = self.user_query
-        generated_code = await self.model_client.create([UserMessage(content=user_query, source="user")])
+        generated_code = await self.model_client.create([UserMessage(content=self.developer_agent_prompt.format(user_query=user_query), source="user")])
         return generated_code
 
     async def assistant_run(self):
@@ -56,31 +52,18 @@ class CodeGenratingAgent:
             code = f.read()
         return code
     
-    async def refactor_code(self, code_file_path):
+    async def refactor_code(self, code_file_path, new_folder_path="code_refactor", file_name="code_refactored"):
+        new_code_path = f"{new_folder_path}/{file_name}.py"
+
         buggy_code = self.read_code(code_file_path)
         refactored_code = await self.model_client.create([UserMessage(content=self.refactor_code_agent_prompt.format(buggy_code=buggy_code), source="user")])
         
         cleaned_code = refactored_code.content.replace("```", "").replace("python", "")
         
-        with open("code_refactor/code_refactored.py", "w") as code_file:
+        with open(new_code_path, "w") as code_file:
             code_file.write(cleaned_code)
 
-        return cleaned_code
+        return cleaned_code, new_code_path
 
 
-if __name__ == "__main__":
-    import asyncio
 
-    code_generator = CodeGenratingAgent("Build a FastAPI code to print fibonnaci series between 1 and 100 in python.The code should be perfectly deployable along \
-                                        with everything added related to CORS middleware. Only and only provide the code, no unnecessary\
-                                        text or explanations around it.")
-    
-    assistant_response = asyncio.run(code_generator.assistant_run())
-
-    parsed_response = json.loads(assistant_response.chat_message.content)
-    code_content = parsed_response["content"]
-
-    cleaned_code = code_content.replace("```", "").replace("python", "")
-
-    with open("sample/code_buggy.py", "w") as code_file:
-        code_file.write(cleaned_code)
