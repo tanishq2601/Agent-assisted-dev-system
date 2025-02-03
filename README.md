@@ -35,12 +35,12 @@ A streamlined, automated development process that leverages AI to accelerate cod
 
 2. **Install dependencies**:
     ```sh
-    pip install -r requirements.txt
+    pip install -r agent_requirements/requirements.txt
     ```
 
 3. **Run the main script**:
     ```sh
-    python main.py
+    python orchestrator.py
     ```
 
 ## Contributing
