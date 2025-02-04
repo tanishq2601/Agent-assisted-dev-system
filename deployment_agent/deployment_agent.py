@@ -1,3 +1,18 @@
+"""
+Deployment Agent Module
+
+This module implements the Infrastructure Agent responsible for deploying code to Azure cloud.
+It handles Azure CLI installation, authentication, and automated deployment processes.
+
+The agent manages the entire deployment workflow including:
+- Azure CLI installation and verification
+- Azure authentication
+- Code packaging and deployment to Azure App Service
+
+Author: AI Vectorial
+Date: 2025-02-04
+"""
+
 import os
 import yaml
 import platform
@@ -20,7 +35,28 @@ with open("prompts.yaml", "r") as file:
     prompts = yaml.safe_load(file)
 
 class DeploymentAgent:
+    """
+    A class that implements the Infrastructure Agent functionality.
+
+    This agent is responsible for:
+    - Managing Azure CLI installation
+    - Handling Azure authentication
+    - Deploying code to Azure App Service
+    - Managing deployment configurations
+
+    Attributes:
+        resource_group (str): Azure resource group name
+        app_name (str): Azure App Service name
+        deployment_agent_prompt (str): Prompt template for deployment
+        model_client (AzureOpenAIChatCompletionClient): Client for Azure OpenAI API
+        code_executor (LocalCommandLineCodeExecutor): Executor for running Azure CLI commands
+        available_status_prompt (str): Prompt template for checking Azure CLI status
+    """
+
     def __init__(self):
+        """
+        Initializes the DeploymentAgent with Azure configurations and required clients.
+        """
         self.resource_group = os.getenv("AZURE_APP_SERVICE_RG")
         self.app_name = os.getenv("AZURE_APP_SERVICE_NAME")
         self.deployment_agent_prompt = prompts["DEPLOYMENT_AGENT"]["prompt"]
@@ -35,6 +71,12 @@ class DeploymentAgent:
         self.available_status_prompt = prompts["AZURE_AVAILABILITY_CHECK"]["prompt"]
 
     async def check_azure_cli(self):
+        """
+        Verifies Azure CLI installation and version.
+
+        If Azure CLI is not installed, triggers installation process.
+        Validates the installation status using AI assessment.
+        """
         result = await self.code_executor.execute_code_blocks(code_blocks=[CodeBlock(code="az --version", language="bash")],
                                                               cancellation_token=CancellationToken())
 
@@ -55,6 +97,14 @@ class DeploymentAgent:
     
         
     def install_azure_cli(self):
+        """
+        Installs Azure CLI based on the operating system.
+
+        Supports Windows (winget), macOS (brew), and Linux (apt).
+
+        Returns:
+            bool: True if installation successful, False otherwise
+        """
         try:
             if platform.system() == "Windows":
                 os.system("winget install --id AzureCLI -e --source winget")
@@ -71,12 +121,29 @@ class DeploymentAgent:
             return False
     
     async def check_authentication_status(self):
+        """
+        Verifies Azure authentication status.
+
+        Initiates Azure login process and validates authentication.
+        """
         await self.code_executor.execute_code_blocks(code_blocks=[CodeBlock(code="az login", language="bash")],
                                                               cancellation_token=CancellationToken())
         
-        print("Authentication Successful 🥳 Initiating Deployment...")
+        print("Authentication Successful Initiating Deployment...")
 
     async def deploy_code(self, zip_file_path):
+        """
+        Deploys code package to Azure App Service.
+
+        Performs the following steps:
+        1. Verifies Azure CLI installation
+        2. Checks authentication status
+        3. Generates deployment command using AI
+        4. Executes deployment to Azure App Service
+
+        Args:
+            zip_file_path (str): Path to the zipped code package
+        """
         await self.check_azure_cli()
         await self.check_authentication_status()
 

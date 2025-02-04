@@ -24,6 +24,53 @@ A streamlined, automated development process that leverages AI to accelerate cod
 
 ## Project Structure
 
+```
+hivemind/
+├── agent_requirements/    # Dependencies and requirements
+├── code_refactor/        # Storage for refactored code
+├── coding_agent/         # Developer Agent implementation
+├── deployment_agent/     # Infrastructure Agent for deployment
+├── qa_tester/           # QA Agent implementation
+├── helper.py            # Utility functions
+├── orchestrator.py      # Main orchestration logic
+└── prompts.yaml         # Agent prompts and configurations
+```
+
+## Architecture
+
+The project follows a three-agent architecture:
+
+1. **Developer Agent** (`coding_agent/`)
+   - Generates Python code based on user requirements
+   - Uses GPT-4 for code generation
+   - Supports code refactoring capabilities
+
+2. **QA Agent** (`qa_tester/`)
+   - Validates and tests generated code
+   - Executes code in isolated environment
+   - Provides automated code assessment
+   - Can trigger code fixes when issues are found
+
+3. **Infrastructure Agent** (`deployment_agent/`)
+   - Handles Azure cloud deployments
+   - Manages Azure CLI installation and authentication
+   - Automates deployment process using Azure App Service
+
+## Configuration
+
+1. **Environment Variables**:
+   Create a `.env` file with the following variables:
+   ```
+   AZURE_API_BASE=your_azure_endpoint
+   AZURE_API_KEY=your_azure_api_key
+   AZURE_APP_SERVICE_RG=your_resource_group
+   AZURE_APP_SERVICE_NAME=your_app_service_name
+   ```
+
+2. **Azure Configuration**:
+   - Requires Azure subscription
+   - Azure CLI will be automatically installed if not present
+   - App Service must be pre-configured
 
 ## Getting Started
 

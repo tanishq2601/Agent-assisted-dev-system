@@ -1,3 +1,19 @@
+"""
+Orchestrator Module
+
+This module serves as the main entry point for the Hivemind system, coordinating the workflow
+between the Developer Agent, QA Agent, and Deployment Agent. It manages the entire process
+from code generation to deployment.
+
+The workflow consists of three main steps:
+1. Code Generation: Takes user requirements and generates code
+2. Testing: Validates and tests the generated code
+3. Deployment: Deploys the validated code to Azure cloud
+
+Author: AI Vectorial
+Date: 2025-02-04
+"""
+
 import uuid
 import asyncio
 import json
@@ -14,6 +30,17 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 def code(user_query: str, folder_path: str, file_name: str):
+    """
+    Generates code based on user requirements using the Developer Agent.
+
+    Args:
+        user_query (str): The user's code requirements or specifications
+        folder_path (str): Directory where the generated code will be saved
+        file_name (str): Name of the file to create (without extension)
+
+    Returns:
+        str: Path to the generated code file
+    """
     code_generator = CodeGenratingAgent(user_query)
     
     assistant_response = asyncio.run(code_generator.assistant_run())
@@ -28,6 +55,15 @@ def code(user_query: str, folder_path: str, file_name: str):
     return f"{folder_path}/{file_name}.py"
 
 def test(code_path: str):
+    """
+    Tests the generated code using the QA Agent.
+
+    Args:
+        code_path (str): Path to the code file to test
+
+    Returns:
+        bool: True if code passes tests, False otherwise
+    """
     qa_tester = QATester()
 
     executed_code = asyncio.run(qa_tester.qa_tester(code_path))
@@ -38,6 +74,12 @@ def test(code_path: str):
     return output_verification
 
 def deploy(folder_path):
+    """
+    Deploys the code to Azure cloud using the Deployment Agent.
+
+    Args:
+        folder_path (str): Path to the folder containing code to deploy
+    """
     deployment_agent = DeploymentAgent()
 
     print(f"file path to be 🤐 : {folder_path}")
@@ -47,6 +89,18 @@ def deploy(folder_path):
 
 # driver function
 def orchestrate(user_query: str):
+    """
+    Main driver function that orchestrates the entire workflow.
+    
+    This function coordinates:
+    1. Code generation from user requirements
+    2. Code testing and validation
+    3. Code fixing if tests fail
+    4. Deployment to cloud
+
+    Args:
+        user_query (str): User's code requirements or specifications
+    """
     folder_path = "sample"
     file_name = "test_sample"
 
